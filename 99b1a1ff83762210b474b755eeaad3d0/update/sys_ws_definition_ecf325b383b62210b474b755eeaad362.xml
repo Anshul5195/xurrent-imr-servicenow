@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_definition">
     <sys_ws_definition action="INSERT_OR_UPDATE">
         <active>true</active>
-        <base_uri>/api/x_1072151_zenduty/xurrent_alerts</base_uri>
+        <base_uri>/api/x_xurrent_imr/xurrent_imr_alerts</base_uri>
         <consumes>application/json,application/xml,text/xml</consumes>
         <consumes_customized>false</consumes_customized>
         <default_version>No active default version</default_version>
@@ -9,7 +9,7 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <is_versioned>false</is_versioned>
         <name>Xurrent Alerts</name>
-        <namespace>x_1072151_zenduty</namespace>
+        <namespace>x_xurrent_imr</namespace>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
         <service_id>xurrent_alerts</service_id>
