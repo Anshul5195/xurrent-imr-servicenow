@@ -43,9 +43,9 @@
 
 (function executeRule(current, previous) {
     try {
-		// Skip outbound integration to Zenduty
-		if (current.operation() == 'insert' && current.u_originated_from == 'zenduty') {
-			gs.info("Not triggering the create busuness rule because work note is created by zenduty");
+		// Skip outbound integration to Xurrent IMR
+		if (current.operation() == 'insert' && current.u_originated_from == 'Xurrent IMR') {
+			gs.info("Not triggering the create busuness rule because work note is created by Xurrent IMR");
 			return;
 		}
 
@@ -74,7 +74,7 @@
         var r = new sn_ws.RESTMessageV2('ServiceNow Event', 'ServiceNow Work Note Alert');
 		r.setStringParameterNoEscape('service_now_instance_identifier', gs.getProperty('instance_name'));
         r.setRequestHeader("Content-Type", "application/json");
-		r.setRequestHeader("X-Zenduty-Signature", signature);
+		r.setRequestHeader("X-Xurrent-IMR-Signature", signature);
         r.setRequestBody(payloadStr);
         r.executeAsync(); // Asynchronous call
 
@@ -93,9 +93,9 @@
         <sys_mod_count>0</sys_mod_count>
         <sys_name>ServiceNow Work Note Alert Business Rule</sys_name>
         <sys_overrides/>
-        <sys_package display_value="Zenduty" source="x_1072151_zenduty">99b1a1ff83762210b474b755eeaad3d0</sys_package>
+        <sys_package display_value="Xurrent IMR" source="x_xurrent_imr">99b1a1ff83762210b474b755eeaad3d0</sys_package>
         <sys_policy/>
-        <sys_scope display_value="Zenduty">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
+        <sys_scope display_value="Xurrent IMR">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
         <sys_update_name>sys_script_5473297383b62210b474b755eeaad3b6</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2025-07-24 12:35:24</sys_updated_on>
