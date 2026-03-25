@@ -15,11 +15,11 @@
 		var ciPresent = false;
 
         // Basic validation
-        if (!body || !body.short_description || !body.u_originated_from || !body.zenduty_incident || !body.urgency || !body.mandatory_fields) {
+        if (!body || !body.short_description || !body.u_originated_from || !body.xurrent_imr_incident || !body.urgency || !body.mandatory_fields) {
             response.setStatus(400);
             return {
                 status: "error",
-                message: "Missing required fields: short_description or u_originated_from or zenduty_incident or urgency or mandatory_fields"
+                message: "Missing required fields: short_description or u_originated_from or xurrent_imr_incident or urgency or mandatory_fields"
             };
         }
 
@@ -63,7 +63,7 @@
         incident.short_description = body.short_description;
         incident.description = body.description;
 		incident.u_originated_from = body.u_originated_from;
-		incident.u_zenduty_incident = body.zenduty_incident;
+		incident.u_xurrent_imr_incident = body.xurrent_imr_incident;
 		incident.urgency = urgencyGR.value;
 
 		if (snowPriority){
@@ -113,7 +113,7 @@
 
 })(request, response);
 ]]></operation_script>
-        <operation_uri>/api/x_1072151_zenduty/zenduty_alerts/create_incident</operation_uri>
+        <operation_uri>/api/x_xurrent_imr/xurrent_imr_alerts/create_incident</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
         <relative_path>/create_incident</relative_path>
@@ -128,13 +128,13 @@
         <sys_id>2914e5b383b62210b474b755eeaad343</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>Create Incident</sys_name>
-        <sys_package display_value="Zenduty" source="x_1072151_zenduty">99b1a1ff83762210b474b755eeaad3d0</sys_package>
+        <sys_package display_value="Xurrent IMR" source="x_xurrent_imr">99b1a1ff83762210b474b755eeaad3d0</sys_package>
         <sys_policy>protected</sys_policy>
-        <sys_scope display_value="Zenduty">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
+        <sys_scope display_value="Xurrent IMR">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
         <sys_update_name>sys_ws_operation_2914e5b383b62210b474b755eeaad343</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2025-07-24 12:37:53</sys_updated_on>
-        <web_service_definition display_value="Zenduty Alerts">ecf325b383b62210b474b755eeaad362</web_service_definition>
+        <web_service_definition display_value="Xurrent IMR Alerts">ecf325b383b62210b474b755eeaad362</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
 </record_update>
