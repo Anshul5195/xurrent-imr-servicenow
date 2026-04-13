@@ -44,8 +44,8 @@
 (function executeRule(current, previous) {
     try {
 		// Skip outbound integration to Xurrent IMR
-		if (current.operation() == 'insert' && current.u_originated_from == 'Xurrent IMR') {
-			gs.info("Not triggering the create busuness rule because work note is created by Xurrent IMR");
+		if (current.operation() == 'insert' && current.getValue('value') && current.getValue('value').indexOf('[IMR]') == 0) {
+			gs.info("Not triggering the work note business rule because work note starts with [IMR]");
 			return;
 		}
 
@@ -64,12 +64,19 @@
 
 		// Add related incident sys_id
         payload.incident_sys_id = current.getValue('element_id');
-
 		
         // Convert the payload object to a JSON string
         var payloadStr = JSON.stringify(payload);
 
-		var signature = customHash(payloadStr, gs.getCurrentScopeName());
+		var scopeGR = new GlideRecord('sys_scope');
+		scopeGR.addQuery('scope', 'x_xurrent_imr'); // e.g., 'x_12345_xurrent_imr'
+		scopeGR.query();
+		var appSysId = '';
+		if (scopeGR.next()) {
+			appSysId = scopeGR.getUniqueValue();
+		}
+
+		var signature = customHash(payloadStr, appSysId);
 		
         var r = new sn_ws.RESTMessageV2('ServiceNow Event', 'ServiceNow Work Note Alert');
 		r.setStringParameterNoEscape('service_now_instance_identifier', gs.getProperty('instance_name'));
@@ -90,7 +97,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>5473297383b62210b474b755eeaad3b6</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>7</sys_mod_count>
         <sys_name>ServiceNow Work Note Alert Business Rule</sys_name>
         <sys_overrides/>
         <sys_package display_value="Xurrent IMR" source="x_xurrent_imr">99b1a1ff83762210b474b755eeaad3d0</sys_package>
@@ -98,7 +105,7 @@
         <sys_scope display_value="Xurrent IMR">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
         <sys_update_name>sys_script_5473297383b62210b474b755eeaad3b6</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-07-24 12:35:24</sys_updated_on>
+        <sys_updated_on>2026-04-13 18:10:03</sys_updated_on>
         <template/>
         <when>after</when>
     </sys_script>

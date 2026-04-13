@@ -7,7 +7,48 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>Create Incident</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+        <operation_script><![CDATA[function getIncidentFieldForTable(tableName) {
+    var currentTable = tableName;
+
+    while (currentTable) {
+        var dictGR = new GlideRecord('sys_dictionary');
+        dictGR.addQuery('name', 'IN', 'incident,task');
+        dictGR.addQuery('reference', currentTable);
+        dictGR.query();
+
+        var fields = [];
+        while (dictGR.next()) {
+            fields.push({
+                field_name: dictGR.element.toString(),
+                field_label: dictGR.column_label.toString()
+            });
+        }
+
+        if (fields.length > 0) {
+            return fields;
+        }
+
+        // Walk up to parent table
+        var tableGR = new GlideRecord('sys_db_object');
+        tableGR.addQuery('name', currentTable);
+        tableGR.query();
+        if (tableGR.next() && tableGR.super_class) {
+            var parentGR = new GlideRecord('sys_db_object');
+            if (parentGR.get(tableGR.super_class)) {
+                currentTable = parentGR.name.toString();
+            } else {
+                currentTable = null;
+            }
+        } else {
+            currentTable = null;
+        }
+    }
+
+    return [];
+}
+
+
+(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
 
     try {
         var body = request.body.data;
@@ -77,7 +118,6 @@
             };
         }
         var entityTableName = sysDbGR.getValue('name');       // actual table name e.g. 'sys_user_group'
-        var entityFieldName = sysDbGR.getDisplayValue('name'); // label / display value e.g. 'assignment_group'
 
         // ── Step 2: Resolve entity record sys_id ──────────────────────────────
         var entityRecordSysId = null;
@@ -112,9 +152,8 @@
 				};
 			}
         } else if (body.entity_type_mapping_mode == NAME_MATCH_MODE) {
-            var displayField = new GlideTableDescriptor(entityTableName).getDisplayField();
 			var nameMatchGR = new GlideRecord(entityTableName);
-			nameMatchGR.addQuery(displayField, body.service_name);
+			nameMatchGR.addQuery("name", body.service_name);
 			nameMatchGR.query();
 			if (nameMatchGR.next()) {
 				entityRecordSysId = nameMatchGR.getUniqueValue();
@@ -138,10 +177,15 @@
         incident.state                  = stateValue;
 
         if (snowPriority) { incident.priority = snowPriority; }
-
-        if (entityFieldName && entityRecordSysId) {
-            incident.setValue(entityFieldName, entityRecordSysId);
-        }
+		
+        if (entityTableName && entityRecordSysId) {
+			var fields = getIncidentFieldForTable(entityTableName);
+			for (var f = 0; f < fields.length; f++) {
+				gs.info("fields[f].field_name: " + fields[f].field_name);
+				gs.info("entityRecordSysId: " + entityRecordSysId);
+				incident.setValue(fields[f].field_name, entityRecordSysId);
+			}
+		}
 
         incident.caller_id = gs.getUser().getID();
 
@@ -171,7 +215,7 @@
     }
 
 })(request, response);]]></operation_script>
-        <operation_uri>/api/x_xurrent_imr/xurrent_alerts/create_incident</operation_uri>
+        <operation_uri>/api/x_xurrent_imr/xurrent_imr_alerts/create_incident</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
         <relative_path>/create_incident</relative_path>
@@ -184,15 +228,15 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-07-24 12:37:53</sys_created_on>
         <sys_id>2914e5b383b62210b474b755eeaad343</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_mod_count>9</sys_mod_count>
         <sys_name>Create Incident</sys_name>
         <sys_package display_value="Xurrent IMR" source="x_xurrent_imr">99b1a1ff83762210b474b755eeaad3d0</sys_package>
         <sys_policy>protected</sys_policy>
         <sys_scope display_value="Xurrent IMR">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
         <sys_update_name>sys_ws_operation_2914e5b383b62210b474b755eeaad343</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-04-03 11:54:48</sys_updated_on>
-        <web_service_definition display_value="Xurrent Alerts">ecf325b383b62210b474b755eeaad362</web_service_definition>
+        <sys_updated_on>2026-04-07 14:33:18</sys_updated_on>
+        <web_service_definition display_value="Xurrent IMR Alerts">ecf325b383b62210b474b755eeaad362</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
 </record_update>

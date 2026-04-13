@@ -10,7 +10,7 @@
         <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
     var result = {
         status: "success",
-        entity_types: []
+        entity_types: [],
     };
 
     try {
@@ -76,7 +76,7 @@
                 result.entity_types.push({
                     label: tableDefGR.label.getDisplayValue(),
                     name: tableDefGR.name.getDisplayValue(),
-                    sys_id: tableDefGR.getUniqueValue()
+                    sys_id: tableDefGR.getUniqueValue(),
                 });
             }
         }
@@ -91,7 +91,8 @@
             message: e.toString()
         };
     }
-})(request, response);]]></operation_script>
+})(request, response);
+]]></operation_script>
         <operation_uri>/api/x_xurrent_imr/xurrent_imr_connections/fetch_entity_types</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
@@ -105,14 +106,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-03-25 16:36:30</sys_created_on>
         <sys_id>5ab736da9373f210dd07fd10ed03d6c3</sys_id>
-        <sys_mod_count>37</sys_mod_count>
+        <sys_mod_count>63</sys_mod_count>
         <sys_name>Fetch Entity Types</sys_name>
         <sys_package display_value="Xurrent IMR" source="x_xurrent_imr">99b1a1ff83762210b474b755eeaad3d0</sys_package>
         <sys_policy>protected</sys_policy>
         <sys_scope display_value="Xurrent IMR">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
         <sys_update_name>sys_ws_operation_5ab736da9373f210dd07fd10ed03d6c3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-04-01 08:32:32</sys_updated_on>
+        <sys_updated_on>2026-04-13 09:27:23</sys_updated_on>
         <web_service_definition display_value="Xurrent IMR Connections">4e0565f383b62210b474b755eeaad3df</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>

@@ -42,7 +42,6 @@
 }
 
 (function executeRule(current, previous) {
-	gs.info("I am Not triggering the create busuness rule because incident is created by Xurrent IMR");
     try {
 		// Skip outbound integration to Xurrent IMR
 		if (current.operation() == 'insert' && current.u_originated_from == 'Xurrent IMR') {
@@ -57,7 +56,10 @@
         var elements = current.getElements();
         for (var i = 0; i < elements.length; i++) {
             var fieldName = elements[i].getName();
-            payload[fieldName] = current.getValue(fieldName);
+			payload[fieldName] = {
+				"label": current.getDisplayValue(fieldName),
+				"value": current.getValue(fieldName),
+			};
         }
 
         // Add the action field to the payload
@@ -102,46 +104,18 @@
 			payload.snow_incident_priority_sys_id = null;
 		}
 
-		// Dynamically find the incident field that references the entity type table
-		payload.entity_record_label = null;
-		payload.entity_record_sys_id = null;
-
-		// entity_type_sys_id is the sys_db_object sys_id for cmdb_ci_service_auto
-		var entityTypeSysId = current.getValue('u_imr_service_mapping'); // from your entity_type_details
-
-		// Step 1: get table name from sys_db_object
-		var entityTypeGR = new GlideRecord('sys_db_object');
-		entityTypeGR.addQuery('sys_id', entityTypeSysId);
-		entityTypeGR.query();
-
-		if (entityTypeGR.next()) {
-			var entityTableName = entityTypeGR.getValue('name'); // "cmdb_ci_service_auto"
-
-			var elements = current.getElements();
-			for (var i = 0; i < elements.length; i++) {
-				var fieldName = elements[i].getName();
-				var fieldValue = current.getValue(fieldName);
-
-				// Skip null/empty values — no point querying with nothing
-				if (!fieldValue || fieldValue.length !== 32) continue; // sys_ids are always 32 chars
-
-				var entityRecordGR = new GlideRecord(entityTableName);
-				entityRecordGR.addQuery('sys_id', fieldValue);
-				entityRecordGR.query();
-
-				if (entityRecordGR.next()) {
-					gs.info("Found in field: " + fieldName);
-					payload.entity_record_label = entityRecordGR.getDisplayValue();
-					payload.entity_record_sys_id = entityRecordGR.getUniqueValue();
-					break; // exit the loop immediately
-				}
-			}
-		}
-
         // Convert the payload object to a JSON string
         var payloadStr = JSON.stringify(payload);
 
-		var signature = customHash(payloadStr, gs.getCurrentScopeName());
+		var scopeGR = new GlideRecord('sys_scope');
+		scopeGR.addQuery('scope', 'x_xurrent_imr'); // e.g., 'x_12345_xurrent_imr'
+		scopeGR.query();
+		var appSysId = '';
+		if (scopeGR.next()) {
+			appSysId = scopeGR.getUniqueValue();
+		}
+		
+		var signature = customHash(payloadStr, appSysId);
 		
         var r = new sn_ws.RESTMessageV2('ServiceNow Event', 'ServiceNow Incident Alert');
 		r.setStringParameterNoEscape('service_now_instance_identifier', gs.getProperty('instance_name'));
@@ -162,7 +136,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>2e13617383b62210b474b755eeaad381</sys_id>
-        <sys_mod_count>16</sys_mod_count>
+        <sys_mod_count>36</sys_mod_count>
         <sys_name>ServiceNow Incident Alert Business Rule</sys_name>
         <sys_overrides/>
         <sys_package display_value="Xurrent IMR" source="x_xurrent_imr">99b1a1ff83762210b474b755eeaad3d0</sys_package>
@@ -170,7 +144,7 @@
         <sys_scope display_value="Xurrent IMR">99b1a1ff83762210b474b755eeaad3d0</sys_scope>
         <sys_update_name>sys_script_2e13617383b62210b474b755eeaad381</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-04-07 12:19:43</sys_updated_on>
+        <sys_updated_on>2026-04-13 18:10:48</sys_updated_on>
         <template/>
         <when>after</when>
     </sys_script>
